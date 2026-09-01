@@ -1,0 +1,6 @@
+{
+  "name": "@decalin/docs-viewer",
+  "private": true,
+  "version": "0.0.1",
+  "description": "위키 / 개발노트 / 릴리즈노트에서 공용으로 쓰는 마크다운 목록·본문 컴포넌트 (Astro). 각 apps/* 프로젝트에서 상대경로로 import해서 사용합니다."
+}

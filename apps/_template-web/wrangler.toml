@@ -1,0 +1,12 @@
+# apps/_template-web/wrangler.toml
+# 웹 서비스형 프로젝트 템플릿. 복사한 뒤 name을 새 프로젝트명으로 바꾸세요.
+
+name = "template-web"
+compatibility_date = "2026-08-31"
+pages_build_output_dir = "dist"
+
+# 서버 로직(방명록/업로드/조회수 등)이 필요해지면 functions/ 폴더를 추가하거나
+# 아래처럼 바인딩을 선언해서 Pages Functions(Worker)로 확장할 수 있습니다.
+# [[kv_namespaces]]
+# binding = "VIEWS"
+# id = "xxxxxxxx"

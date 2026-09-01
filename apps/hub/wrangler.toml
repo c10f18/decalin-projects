@@ -1,0 +1,18 @@
+# apps/hub/wrangler.toml
+#
+# 이 프로젝트는 "Git 연동으로 자동배포"만 쓸 거면 사실 wrangler.toml이 필수는 아닙니다.
+# (Cloudflare 대시보드에서 repo 연결 → 빌드 커맨드만 지정하면 끝)
+#
+# 그래도 넣어두는 이유:
+# 1) `wrangler pages dev`로 로컬에서 Cloudflare 환경과 거의 동일하게 미리보기 가능
+# 2) 나중에 KV/D1/R2 바인딩이나 Pages Functions(=API)를 추가할 때 설정을 여기 한 곳에 모아둘 수 있음
+# 3) CLI로 배포(`wrangler pages deploy`)할 때 프로젝트 이름/빌드 산출물 위치를 알려줌
+
+name = "decalin-projects"
+compatibility_date = "2026-08-31"
+pages_build_output_dir = "dist"
+
+# 예시) 나중에 API가 필요해지면 이런 식으로 바인딩을 추가합니다.
+# [[kv_namespaces]]
+# binding = "VIEW_COUNTS"
+# id = "xxxxxxxxxxxxxxxx"

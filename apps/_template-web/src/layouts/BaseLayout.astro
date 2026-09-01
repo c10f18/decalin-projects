@@ -1,0 +1,30 @@
+---
+// 새 프로젝트로 복사하면 SITE_NAME만 바꾸세요.
+const SITE_NAME = 'Template Web';
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · {SITE_NAME}</title>
+  </head>
+  <body>
+    <div class="page">
+      <slot />
+    </div>
+    <style is:global>
+      body {
+        font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+        color: #1f2328;
+        margin: 0;
+      }
+      .page { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+    </style>
+  </body>
+</html>

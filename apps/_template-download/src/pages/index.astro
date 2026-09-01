@@ -1,0 +1,102 @@
+---
+// apps/_template-download/src/pages/index.astro
+//
+// ⬇ 다운로드형 프로젝트의 "소개(광고) 랜딩 페이지".
+// 실행파일(exe 등)은 GitHub에 올리고, 이 페이지는 "무엇을 하는 도구인지 알리고 → 내려받게" 한다.
+// 복사한 뒤 아래 상수와 features, 그리고 텍스트를 실제 프로젝트에 맞게 바꾸세요.
+
+const SITE_NAME = '도구 이름';
+const REPO_URL = 'https://github.com/사용자명/저장소명'; // ← 실제 repo로 교체
+const DOWNLOAD_URL = `${REPO_URL}/releases/latest`; // Releases를 안 쓰면 repo/dist 경로로 교체
+const PLATFORM_NOTE = 'Windows 10/11 · 설치 없이 실행 (.exe) · 무료';
+
+const features = [
+  { icon: '✨', title: '특징 1', body: '이 도구가 해결하는 문제를 한 줄로.' },
+  { icon: '⚡', title: '특징 2', body: '빠르다 / 간단하다 / 오프라인 같은 핵심 가치.' },
+  { icon: '🔒', title: '특징 3', body: '차별점이나 안심 포인트.' },
+];
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{SITE_NAME} — 소개</title>
+    <meta name="description" content="이 도구가 무엇을 하는지 한 줄 설명." />
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="logo">📦</div>
+        <h1>{SITE_NAME}</h1>
+        <p class="lede">이 도구가 무엇을 해주는지 한 문장으로 설명하세요.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href={DOWNLOAD_URL}>⬇ 내려받기</a>
+          <a class="btn" href={REPO_URL}>GitHub에서 보기</a>
+        </div>
+        <p class="platform-note">{PLATFORM_NOTE}</p>
+      </section>
+
+      <section class="shot" aria-hidden="true">
+        <div class="shot-placeholder">여기에 스크린샷 (public/images/screenshot.png)</div>
+      </section>
+
+      <section class="features">
+        {features.map((f) => (
+          <div class="feature">
+            <div class="feature-icon">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </div>
+        ))}
+      </section>
+
+      <footer class="site-nav">
+        <span>더 알아보기</span>
+        <nav>
+          <a href="/info">릴리즈 노트</a>
+          <a href="/wiki">위키</a>
+          <a href="/arch">아키텍처</a>
+          <a href="/devnote">개발노트</a>
+        </nav>
+      </footer>
+    </main>
+
+    <style>
+      :root { --indigo: #4f46e5; --ink: #1f2328; --muted: #6b7280; }
+      * { box-sizing: border-box; }
+      body { font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif; color: var(--ink); margin: 0; }
+      main { max-width: 760px; margin: 0 auto; padding: 3.5rem 1.5rem 4rem; }
+
+      .hero { text-align: center; }
+      .logo { font-size: 3.5rem; line-height: 1; }
+      .hero h1 { font-size: 2.6rem; margin: 0.6rem 0 0.4rem; }
+      .lede { font-size: 1.15rem; color: var(--muted); margin: 0 auto 1.6rem; max-width: 30rem; }
+
+      .cta { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; }
+      .btn { text-decoration: none; padding: 0.7rem 1.3rem; border-radius: 10px; border: 1px solid #d1d5db; color: var(--ink); font-weight: 600; }
+      .btn:hover { border-color: #9ca3af; }
+      .btn-primary { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+      .btn-primary:hover { background: #4338ca; }
+      .platform-note { color: var(--muted); font-size: 0.85rem; margin-top: 0.9rem; }
+
+      .shot { margin: 2.8rem 0; }
+      .shot-placeholder {
+        border: 2px dashed #d1d5db; border-radius: 14px; color: #9ca3af;
+        display: grid; place-items: center; height: 260px; font-size: 0.9rem;
+      }
+
+      .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+      .feature { border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.2rem; }
+      .feature-icon { font-size: 1.6rem; }
+      .feature h3 { margin: 0.5rem 0 0.3rem; font-size: 1.05rem; }
+      .feature p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+
+      .site-nav { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid #eee; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; }
+      .site-nav > span { color: var(--muted); font-size: 0.85rem; }
+      .site-nav nav { display: flex; gap: 1rem; flex-wrap: wrap; }
+      .site-nav a { color: var(--indigo); text-decoration: none; font-size: 0.9rem; }
+      .site-nav a:hover { text-decoration: underline; }
+    </style>
+  </body>
+</html>

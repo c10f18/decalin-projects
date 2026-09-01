@@ -1,0 +1,13 @@
+# apps/photo-fold/wrangler.toml
+# hub와 동일한 이유로 존재 (로컬 미리보기 + 나중에 API/바인딩 추가용).
+# 서비스마다 name만 다르게 바꿔서 그대로 복붙하면 됩니다.
+
+name = "photo-fold"
+compatibility_date = "2026-08-31"
+pages_build_output_dir = "dist"
+
+# photo-fold가 나중에 "사진 업로드 후 서버에서 리사이즈" 같은 API가 필요해지면
+# 예를 들어 이렇게 R2(파일 저장소) 바인딩을 추가하게 됩니다:
+# [[r2_buckets]]
+# binding = "PHOTOS"
+# bucket_name = "photo-fold-uploads"

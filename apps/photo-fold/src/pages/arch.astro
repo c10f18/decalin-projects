@@ -1,0 +1,16 @@
+---
+// apps/photo-fold/src/pages/arch.astro — 아키텍처 1페이지 (개발자용 구조 설명)
+//
+// wiki(여러 문서 목록)와 달리, "이 프로젝트가 어떻게 굴러가는가"를 한 장으로 정리하는
+// 단일 페이지. content/architecture.md 한 파일만 렌더링한다.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MarkdownDoc from '../../../../packages/docs-viewer/src/MarkdownDoc.astro';
+import { globToPosts } from '../../../../packages/docs-viewer/src/postUtils';
+
+const modules = import.meta.glob('../content/architecture.md', { eager: true });
+const [post] = globToPosts(modules);
+---
+
+<BaseLayout title={post?.title ?? '아키텍처'}>
+  <MarkdownDoc post={post} backHref="/" backLabel="홈으로" />
+</BaseLayout>

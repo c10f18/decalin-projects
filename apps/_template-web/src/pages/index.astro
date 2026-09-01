@@ -1,0 +1,32 @@
+---
+// apps/_template-web/src/pages/index.astro
+//
+// 🌐 웹 서비스형 프로젝트 템플릿의 홈.
+// 이 페이지 자체가 "서비스 화면"이 됩니다. 여기부터 실제 UI를 자유롭게 채우세요.
+// (실행파일을 배포하는 다운로드형 프로젝트라면 apps/photo-fold 를 복사하세요.)
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Template Web</title>
+  </head>
+  <body>
+    <main>
+      <h1>🌐 서비스 이름</h1>
+      <p>여기에 실제 웹 서비스 UI가 들어갑니다. (이 index.astro 를 자유롭게 채우세요.)</p>
+      <nav>
+        <a href="/intro">소개</a> ·
+        <a href="/info">릴리즈 노트</a> ·
+        <a href="/wiki">위키</a> ·
+        <a href="/arch">아키텍처</a> ·
+        <a href="/devnote">개발노트</a>
+      </nav>
+    </main>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 720px; margin: 3rem auto; padding: 0 1.5rem; }
+      nav a { color: #4f46e5; text-decoration: none; }
+    </style>
+  </body>
+</html>

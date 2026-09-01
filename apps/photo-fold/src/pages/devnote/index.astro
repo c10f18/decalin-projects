@@ -1,0 +1,17 @@
+---
+// apps/photo-fold/src/pages/devnote/index.astro — 개발노트(회고/TIL) 목록
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../../../../packages/docs-viewer/src/PostList.astro';
+import { globToPosts } from '../../../../../packages/docs-viewer/src/postUtils';
+
+const modules = import.meta.glob('../../content/devnote/*.md', { eager: true });
+const posts = globToPosts(modules);
+const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
+---
+
+<BaseLayout title="개발노트">
+  <a href="/">← Photo Fold</a>
+  <h1>개발노트</h1>
+  <p>공부할 것, 겪은 어려움, 예상 못하게 배운 것들을 기록하는 회고 공간입니다.</p>
+  <PostList posts={posts} activeTag={activeTag} basePath="/devnote" />
+</BaseLayout>

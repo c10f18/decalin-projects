@@ -1,0 +1,18 @@
+---
+// apps/photo-fold/src/pages/devnote/[slug].astro — 개발노트 상세
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MarkdownDoc from '../../../../../packages/docs-viewer/src/MarkdownDoc.astro';
+import { globToPosts } from '../../../../../packages/docs-viewer/src/postUtils';
+
+export async function getStaticPaths() {
+  const modules = import.meta.glob('../../content/devnote/*.md', { eager: true });
+  const posts = globToPosts(modules);
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+---
+
+<BaseLayout title={post.title}>
+  <MarkdownDoc post={post} backHref="/devnote" />
+</BaseLayout>

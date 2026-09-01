@@ -1,0 +1,7 @@
+# apps/_template-download/wrangler.toml
+# 다운로드형(exe 등 실행파일을 GitHub에 올리고, 여기엔 소개 랜딩만 배포) 프로젝트 템플릿.
+# 복사한 뒤 name을 새 프로젝트명으로 바꾸세요.
+
+name = "template-download"
+compatibility_date = "2026-08-31"
+pages_build_output_dir = "dist"

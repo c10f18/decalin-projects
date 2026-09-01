@@ -1,0 +1,45 @@
+---
+// apps/hub/src/components/Badge.astro
+//
+// 상태 배지("진행중", "완료" 등)와 "업데이트됨" 배지를 계산해서 보여준다.
+// 업데이트됨의 기준(며칠 이내)은 RECENT_DAYS 하나만 바꾸면 전체에 반영됨.
+
+import type { ProjectStatus } from '../data/projects';
+
+interface Props {
+  status: ProjectStatus;
+  updatedAt: string;
+}
+
+const { status, updatedAt } = Astro.props;
+
+const STATUS_LABEL: Record<ProjectStatus, string> = {
+  active: '진행중',
+  paused: '보류',
+  done: '완료',
+  archived: '중단',
+};
+
+const RECENT_DAYS = 14;
+const isRecentlyUpdated =
+  (Date.now() - new Date(updatedAt).getTime()) / (1000 * 60 * 60 * 24) <= RECENT_DAYS;
+---
+
+<span class:list={['badge', `badge-${status}`]}>{STATUS_LABEL[status]}</span>
+{isRecentlyUpdated && <span class="badge badge-updated">업데이트됨</span>}
+
+<style>
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    margin-right: 0.3rem;
+  }
+  .badge-active { background: #e6f7ec; color: #1a7f4b; }
+  .badge-paused { background: #fff4e5; color: #92600a; }
+  .badge-done { background: #e8eefc; color: #2b4fc7; }
+  .badge-archived { background: #f0f0f0; color: #6b7280; }
+  .badge-updated { background: #fdeaea; color: #c0392b; }
+</style>

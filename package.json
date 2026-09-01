@@ -1,0 +1,21 @@
+{
+  "name": "decalin-side-projects",
+  "private": true,
+  "version": "0.0.1",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev:hub": "pnpm --filter hub dev",
+    "dev:photo-fold": "pnpm --filter photo-fold dev",
+    "dev:redmine": "pnpm --filter download-redmine-wiki dev",
+    "dev:qr": "pnpm --filter qr-code-converter dev",
+    "dev:template-web": "pnpm --filter template-web dev",
+    "dev:template-download": "pnpm --filter template-download dev",
+    "build:hub": "pnpm --filter hub build",
+    "build:photo-fold": "pnpm --filter photo-fold build",
+    "build:redmine": "pnpm --filter download-redmine-wiki build",
+    "build:qr": "pnpm --filter qr-code-converter build",
+    "build:template-web": "pnpm --filter template-web build",
+    "build:template-download": "pnpm --filter template-download build",
+    "build:all": "pnpm -r build"
+  }
+}

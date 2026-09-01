@@ -1,0 +1,17 @@
+---
+// 위키(명세/문서) 목록
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../../../../packages/docs-viewer/src/PostList.astro';
+import { globToPosts } from '../../../../../packages/docs-viewer/src/postUtils';
+
+const modules = import.meta.glob('../../content/wiki/*.md', { eager: true });
+const posts = globToPosts(modules);
+const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
+---
+
+<BaseLayout title="위키">
+  <a href="/">← 홈</a>
+  <h1>위키</h1>
+  <p>기능 명세와 구조 문서를 모아둔 곳입니다.</p>
+  <PostList posts={posts} activeTag={activeTag} basePath="/wiki" />
+</BaseLayout>

@@ -1,0 +1,58 @@
+---
+// packages/docs-viewer/src/PostList.astro
+//
+// 위키 / 개발노트 / 릴리즈노트 공용 "목록" 컴포넌트.
+// 각 서비스 프로젝트는 이 컴포넌트에 posts 배열만 넘겨주면
+// 핀 고정 + 날짜정렬 + 태그필터가 담긴 목록이 그려진다.
+
+import { sortAndFilterPosts, collectTags, formatDate, type PostModule } from './postUtils';
+import './docs-viewer.css';
+
+interface Props {
+  posts: PostModule[];
+  activeTag?: string;
+  basePath: string; // 예: "/wiki" 또는 "/devnote"
+}
+
+const { posts, activeTag, basePath } = Astro.props;
+const list = sortAndFilterPosts(posts, { tag: activeTag });
+const tags = collectTags(posts);
+---
+
+<div class="docs-list">
+  {tags.length > 0 && (
+    <nav class="docs-tags" aria-label="태그 필터">
+      <a href={basePath} class={!activeTag ? 'is-active' : ''}>전체</a>
+      {tags.map((tag) => (
+        <a
+          href={`${basePath}?tag=${encodeURIComponent(tag)}`}
+          class={activeTag === tag ? 'is-active' : ''}
+        >
+          #{tag}
+        </a>
+      ))}
+    </nav>
+  )}
+
+  <ul class="docs-items">
+    {list.map((post) => (
+      <li class:list={['docs-item', { 'is-pinned': post.pinned }]}>
+        <a href={`${basePath}/${post.slug}`}>
+          {post.pinned && <span class="pin-badge">📌 공지</span>}
+          <span class="docs-item-title">{post.title}</span>
+          <span class="docs-item-date">{formatDate(post.date)}</span>
+        </a>
+        {post.summary && <p class="docs-item-summary">{post.summary}</p>}
+        {post.tags && post.tags.length > 0 && (
+          <div class="docs-item-tags">
+            {post.tags.map((t) => (
+              <a href={`${basePath}?tag=${encodeURIComponent(t)}`} class="tag-chip">#{t}</a>
+            ))}
+          </div>
+        )}
+      </li>
+    ))}
+  </ul>
+
+  {list.length === 0 && <p class="docs-empty">아직 글이 없어요.</p>}
+</div>

@@ -1,0 +1,17 @@
+---
+// apps/photo-fold/src/pages/wiki/index.astro — 위키(명세/문서) 목록
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../../../../packages/docs-viewer/src/PostList.astro';
+import { globToPosts } from '../../../../../packages/docs-viewer/src/postUtils';
+
+const modules = import.meta.glob('../../content/wiki/*.md', { eager: true });
+const posts = globToPosts(modules);
+const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
+---
+
+<BaseLayout title="위키">
+  <a href="/">← Photo Fold</a>
+  <h1>위키</h1>
+  <p>기능 명세, 구조 문서 등 "지금 어떻게 되어있는지"를 정리하는 공간입니다.</p>
+  <PostList posts={posts} activeTag={activeTag} basePath="/wiki" />
+</BaseLayout>

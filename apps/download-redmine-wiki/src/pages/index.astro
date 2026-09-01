@@ -1,0 +1,99 @@
+---
+// apps/download-redmine-wiki/src/pages/index.astro — 소개(광고) 랜딩
+
+const REPO_URL = 'https://github.com/c10f18/DownloadRedmineWiki';
+const DOWNLOAD_URL = `${REPO_URL}/releases/latest`;
+
+const features = [
+  { icon: '🔐', title: '두 가지 인증', body: 'API Key 또는 아이디/비밀번호로 Redmine에 접속합니다.' },
+  { icon: '📚', title: '일괄 다운로드', body: '단일 프로젝트는 물론 여러 프로젝트의 위키를 한 번에 받습니다.' },
+  { icon: '📝', title: 'Markdown 저장', body: '위키 페이지를 .md 파일로 내려받아 프로젝트명 기준으로 자동 정리.' },
+  { icon: '📊', title: '실시간 진행률', body: 'GUI에서 진행 상황과 로그를 실시간으로 확인할 수 있습니다.' },
+];
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redmine Wiki Downloader — Redmine 위키를 Markdown으로 내려받기</title>
+    <meta name="description" content="Redmine 프로젝트의 위키 페이지를 통째로 Markdown으로 내려받는 GUI 도구." />
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="logo">📚</div>
+        <h1>Redmine Wiki Downloader</h1>
+        <p class="lede">Redmine 프로젝트의 위키 페이지를 <b>통째로 Markdown으로</b> 내려받는 GUI 도구.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href={DOWNLOAD_URL}>⬇ 내려받기 (v1.0.0)</a>
+          <a class="btn" href={REPO_URL}>소스 보기</a>
+        </div>
+        <p class="platform-note">Windows · Python · GitHub Releases 배포</p>
+      </section>
+
+      <section class="shot" aria-hidden="true">
+        <div class="shot-placeholder">여기에 스크린샷 (public/images/screenshot.png)</div>
+      </section>
+
+      <section class="features">
+        {features.map((f) => (
+          <div class="feature">
+            <div class="feature-icon">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </div>
+        ))}
+      </section>
+
+      <footer class="site-nav">
+        <span>더 알아보기</span>
+        <nav>
+          <a href="/info">릴리즈 노트</a>
+          <a href="/wiki">위키</a>
+          <a href="/arch">아키텍처</a>
+          <a href="/devnote">개발노트</a>
+        </nav>
+      </footer>
+    </main>
+
+    <style>
+      :root { --indigo: #4f46e5; --ink: #1f2328; --muted: #6b7280; }
+      * { box-sizing: border-box; }
+      body { font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif; color: var(--ink); margin: 0; }
+      main { max-width: 760px; margin: 0 auto; padding: 3.5rem 1.5rem 4rem; }
+
+      .hero { text-align: center; }
+      .logo { font-size: 3.5rem; line-height: 1; }
+      .hero h1 { font-size: 2.6rem; margin: 0.6rem 0 0.4rem; }
+      .lede { font-size: 1.15rem; color: var(--muted); margin: 0 auto 1.6rem; max-width: 32rem; }
+      .lede b { color: var(--ink); }
+
+      .cta { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; }
+      .btn { text-decoration: none; padding: 0.7rem 1.3rem; border-radius: 10px; border: 1px solid #d1d5db; color: var(--ink); font-weight: 600; }
+      .btn:hover { border-color: #9ca3af; }
+      .btn-primary { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+      .btn-primary:hover { background: #4338ca; }
+      .platform-note { color: var(--muted); font-size: 0.85rem; margin-top: 0.9rem; }
+      .platform-note code { background: #f1f1f4; padding: 0.05rem 0.35rem; border-radius: 5px; }
+
+      .shot { margin: 2.8rem 0; }
+      .shot-placeholder {
+        border: 2px dashed #d1d5db; border-radius: 14px; color: #9ca3af;
+        display: grid; place-items: center; height: 260px; font-size: 0.9rem;
+      }
+
+      .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+      .feature { border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.2rem; }
+      .feature-icon { font-size: 1.6rem; }
+      .feature h3 { margin: 0.5rem 0 0.3rem; font-size: 1.05rem; }
+      .feature p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+
+      .site-nav { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid #eee; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; }
+      .site-nav > span { color: var(--muted); font-size: 0.85rem; }
+      .site-nav nav { display: flex; gap: 1rem; flex-wrap: wrap; }
+      .site-nav a { color: var(--indigo); text-decoration: none; font-size: 0.9rem; }
+      .site-nav a:hover { text-decoration: underline; }
+    </style>
+  </body>
+</html>

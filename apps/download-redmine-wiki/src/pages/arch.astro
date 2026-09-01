@@ -1,0 +1,13 @@
+---
+// 아키텍처 1페이지 — content/architecture.md 한 파일만 렌더링
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MarkdownDoc from '../../../../packages/docs-viewer/src/MarkdownDoc.astro';
+import { globToPosts } from '../../../../packages/docs-viewer/src/postUtils';
+
+const modules = import.meta.glob('../content/architecture.md', { eager: true });
+const [post] = globToPosts(modules);
+---
+
+<BaseLayout title={post?.title ?? '아키텍처'}>
+  <MarkdownDoc post={post} backHref="/" backLabel="홈으로" />
+</BaseLayout>
