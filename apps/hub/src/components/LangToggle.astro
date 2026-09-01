@@ -1,0 +1,39 @@
+---
+// apps/hub/src/components/LangToggle.astro
+// KO / EN 언어 토글. 선택값은 localStorage('hub-lang')에 저장하고 <html lang/data-lang>에 반영.
+import { STRINGS } from '../i18n';
+---
+<button
+  type="button"
+  class="lang-toggle ctrl-btn"
+  data-lang-toggle
+  aria-label={STRINGS.langToggle.ko}
+  title={STRINGS.langToggle.ko}
+>
+  <span class="lang-ko">KO</span>
+  <span class="lang-en">EN</span>
+</button>
+
+<script is:inline>
+  (function () {
+    var btn = document.querySelector('[data-lang-toggle]');
+    if (!btn) return;
+    var root = document.documentElement;
+    btn.addEventListener('click', function () {
+      var next = (root.dataset.lang || root.lang || 'ko') === 'ko' ? 'en' : 'ko';
+      root.lang = next;
+      root.dataset.lang = next;
+      try { localStorage.setItem('hub-lang', next); } catch (e) {}
+    });
+  })();
+</script>
+
+<style>
+  /* 현재 언어를 굵게 강조 */
+  .lang-toggle { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; gap: 0.15rem; }
+  .lang-toggle span { color: var(--text-muted); }
+  .lang-toggle .lang-ko { color: var(--text); }
+  .lang-toggle .lang-en { display: none; }
+  :root[data-lang='en'] .lang-toggle .lang-ko { display: none; }
+  :root[data-lang='en'] .lang-toggle .lang-en { display: inline; color: var(--text); }
+</style>

@@ -1,0 +1,47 @@
+---
+// apps/hub/src/components/ThemeToggle.astro
+// 라이트/다크 토글. 선택값은 localStorage('hub-theme')에 저장.
+// 값이 없으면 시스템 설정(prefers-color-scheme)을 따른다.
+import Icon from './Icon.astro';
+import { STRINGS } from '../i18n';
+---
+<button
+  type="button"
+  class="theme-toggle ctrl-btn"
+  data-theme-toggle
+  aria-label={STRINGS.themeToggle.ko}
+  title={STRINGS.themeToggle.ko}
+>
+  <span class="i-sun"><Icon name="sun" size={16} /></span>
+  <span class="i-moon"><Icon name="moon" size={16} /></span>
+</button>
+
+<script is:inline>
+  (function () {
+    var btn = document.querySelector('[data-theme-toggle]');
+    if (!btn) return;
+    var root = document.documentElement;
+    function current() {
+      if (root.dataset.theme) return root.dataset.theme;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('hub-theme', next); } catch (e) {}
+    });
+  })();
+</script>
+
+<style>
+  /* 현재 테마에 따라 해/달 아이콘 중 하나만 표시 */
+  .theme-toggle .i-moon { display: none; }
+  :root[data-theme='dark'] .theme-toggle .i-sun { display: none; }
+  :root[data-theme='dark'] .theme-toggle .i-moon { display: inline-flex; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .theme-toggle .i-sun { display: none; }
+    :root:not([data-theme='light']) .theme-toggle .i-moon { display: inline-flex; }
+    :root[data-theme='light'] .theme-toggle .i-moon { display: none; }
+    :root[data-theme='light'] .theme-toggle .i-sun { display: inline-flex; }
+  }
+</style>

@@ -1,55 +1,64 @@
 ---
 // apps/hub/src/pages/index.astro
-import { projects } from '../data/projects';
-import ProjectCard from '../components/ProjectCard.astro';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import LangToggle from '../components/LangToggle.astro';
 import ViewToggle from '../components/ViewToggle.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects } from '../data/projects';
 ---
+<Layout>
+  <div class="topbar">
+    <ThemeToggle />
+    <LangToggle />
+  </div>
 
-<html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Decalin — Side Projects</title>
-  </head>
-  <body>
-    <main>
-      <header class="hub-header">
-        <h1>Decalin의 사이드 프로젝트</h1>
-        <p>취미로 만든 서비스들을 모아둔 곳입니다.</p>
-        <ViewToggle />
-      </header>
+  <Header />
 
-      <section class="project-grid" data-projects data-view="grid">
-        {projects.map((project) => (
-          <ProjectCard project={project} />
-        ))}
-      </section>
-    </main>
+  <div class="toolbar">
+    <ViewToggle />
+  </div>
 
-    <style>
-      body {
-        font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 2.5rem 1.5rem;
-        color: #1f2328;
-      }
-      .hub-header { margin-bottom: 2rem; }
-      .hub-header h1 { margin-bottom: 0.2rem; }
-      .hub-header p { color: #6b7280; margin-top: 0; }
+  <section class="project-grid" data-projects data-view="list">
+    {projects.map((project) => <ProjectCard project={project} />)}
+  </section>
 
-      /* 갤러리 뷰: 카드형 그리드 */
-      .project-grid[data-view='grid'] {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 1rem;
-      }
-      /* 리스트 뷰: 세로로 쌓인 얇은 목록 */
-      .project-grid[data-view='list'] {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-    </style>
-  </body>
-</html>
+  <style>
+    /* 최상단 우측 코너 고정: 테마 / 언어 토글 (흐름에서 빼내 헤더를 밀지 않음) */
+    .topbar {
+      position: absolute;
+      top: 0.65rem;
+      right: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.35rem;
+      z-index: 5;
+    }
+    .topbar :global(.ctrl-btn) {
+      height: 28px;
+      min-width: 28px;
+      padding: 0 0.4rem;
+      border-radius: 8px;
+    }
+    /* 목록 바로 위 우측: 뷰 토글 */
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin: 1.4rem 0 1rem;
+    }
+
+    /* 갤러리(grid): 카드형 그리드 */
+    .project-grid[data-view='grid'] {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    /* 리스트(list): 한 줄 폭으로 쌓기 (카드 내부는 동일한 5줄 구조 유지) */
+    .project-grid[data-view='list'] {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+  </style>
+</Layout>

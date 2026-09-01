@@ -1,0 +1,38 @@
+---
+// apps/hub/src/components/SocialLinks.astro
+// 헤더 우측 소셜 아이콘 줄. 링크는 data/site.ts 에서 관리.
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+---
+<nav class="social" aria-label="Social links">
+  {site.social.map((s) => (
+    <a
+      href={s.href}
+      class="social-link"
+      aria-label={s.label}
+      title={s.label}
+      target={s.id === 'email' ? undefined : '_blank'}
+      rel={s.id === 'email' ? undefined : 'noopener noreferrer'}
+    >
+      <Icon name={s.id} size={18} />
+    </a>
+  ))}
+</nav>
+
+<style>
+  .social { display: flex; gap: 0; flex-wrap: wrap; }
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    color: var(--text-muted);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .social-link:hover {
+    color: var(--accent);
+    background: color-mix(in oklab, var(--accent) 12%, transparent);
+  }
+</style>

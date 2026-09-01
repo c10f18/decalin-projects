@@ -15,6 +15,7 @@ export interface Project {
   name: string;
   slug: string;
   tagline: string;
+  tagline_en?: string; // (i18n 뼈대) EN 선택 시 보여줄 영문 설명. 없으면 KO 원문으로 대체.
   kind: ProjectKind;
 
   // web:      서비스(앱) URL — 보통 사이트 루트 "/"  (예: my-app.pages.dev)
@@ -60,7 +61,7 @@ export const projects: Project[] = [
     devNoteUrl: 'https://photo-fold.pages.dev/devnote',
     status: 'active',
     updatedAt: '2026-08-29',
-    tags: ['이미지처리', 'Python', 'exe'],
+    tags: ['Image', 'Python', 'exe'],
   },
   {
     name: 'Redmine Wiki Downloader',

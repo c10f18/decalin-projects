@@ -1,127 +1,216 @@
 ---
 // apps/hub/src/components/ProjectCard.astro
+// 카드 5줄 구조:
+//   ① 상태 배지(진행중/업데이트됨)
+//   ② 아이콘(옵션) + 프로젝트명 + 형태 칩(다운로드·플랫폼 / 웹)
+//   ③ 간략 설명(tagline)
+//   ④ 태그
+//   ⑤ 버튼 — 1차 액션(내려받기/소개/GitHub) + 문서 그룹(릴리즈노트/위키/아키텍처/개발노트)
 import type { Project } from '../data/projects';
 import Badge from './Badge.astro';
+import Icon from './Icon.astro';
+import T from './T.astro';
+import { STRINGS } from '../i18n';
 
 interface Props {
   project: Project;
 }
-
 const { project } = Astro.props;
 const isDownload = project.kind === 'download';
 
-// 문서 섹션 링크: 값이 있는 것만 카드에 노출
-const docLinks = [
-  { href: project.infoUrl, label: '릴리즈 노트' },
-  { href: project.wikiUrl, label: '위키' },
-  { href: project.archUrl, label: '아키텍처' },
-  { href: project.devNoteUrl, label: '개발노트' },
-].filter((l): l is { href: string; label: string } => Boolean(l.href));
----
+// 소개(랜딩) 페이지 주소.
+//   download: url 자체가 소개/광고 랜딩이다.
+//   web:      마케팅 랜딩(introUrl)이 있으면 그쪽, 없으면 앱 url.
+// 프로젝트명(항목)을 누르면 이 주소로 연결된다. (별도 "소개 페이지" 버튼은 두지 않음)
+const introHref = isDownload ? project.url : project.introUrl ?? project.url;
 
-<article class="project-card">
-  <div class="badges">
+// 문서 섹션 링크: 값이 있는 것만 노출 (보조 버튼 그룹)
+const docLinks = [
+  { href: project.infoUrl, s: STRINGS.releaseNotes },
+  { href: project.wikiUrl, s: STRINGS.wiki },
+  { href: project.archUrl, s: STRINGS.architecture },
+  { href: project.devNoteUrl, s: STRINGS.devNote },
+].filter((l): l is { href: string; s: { ko: string; en: string } } => Boolean(l.href));
+---
+<article class="card">
+  <!-- ① 상태 배지 -->
+  <div class="row-status">
     <Badge status={project.status} updatedAt={project.updatedAt} />
+  </div>
+
+  <!-- ② 아이콘 + 이름 + 형태 칩 -->
+  <div class="row-title">
+    <span class="proj-icon" aria-hidden="true">
+      {project.thumbnail
+        ? <img src={project.thumbnail} alt="" width="26" height="26" />
+        : <Icon name={isDownload ? 'download' : 'globe'} size={18} />}
+    </span>
+    <h3 class="proj-name"><a href={introHref}>{project.name}</a></h3>
     <span class:list={['kind-chip', `kind-${project.kind}`]}>
-      {isDownload ? `⬇ 다운로드${project.platform ? ` · ${project.platform}` : ''}` : '🌐 웹'}
+      <Icon name={isDownload ? 'download' : 'globe'} size={13} />
+      {isDownload ? (
+        <T ko={STRINGS.kindDownload.ko} en={STRINGS.kindDownload.en} />
+      ) : (
+        <T ko={STRINGS.kindWeb.ko} en={STRINGS.kindWeb.en} />
+      )}
     </span>
   </div>
 
-  <h3><a href={project.url}>{project.name}</a></h3>
-  <p class="tagline">{project.tagline}</p>
+  <!-- ③ 설명 -->
+  {project.tagline_en
+    ? <T as="p" ko={project.tagline} en={project.tagline_en} />
+    : <p class="tagline">{project.tagline}</p>}
 
-  <div class="tags">
+  <!-- ④ 태그 -->
+  <div class="row-tags">
     {project.tags.map((t) => <span class="tag-chip">#{t}</span>)}
   </div>
 
-  <div class="cta">
-    {isDownload ? (
-      <>
-        {project.downloadUrl && (
-          <a class="btn btn-primary" href={project.downloadUrl}>내려받기 →</a>
-        )}
-        <a class="btn" href={project.url}>소개 페이지</a>
-        {project.repoUrl && <a class="btn" href={project.repoUrl}>GitHub</a>}
-      </>
-    ) : (
-      <>
-        <a class="btn btn-primary" href={project.url}>서비스 열기 →</a>
-        {project.introUrl && <a class="btn" href={project.introUrl}>소개</a>}
-        {project.repoUrl && <a class="btn" href={project.repoUrl}>GitHub</a>}
-      </>
+  <!-- ⑤ 버튼 -->
+  <div class="row-actions">
+    <div class="cta-primary">
+      {isDownload ? (
+        <>
+          {project.downloadUrl && (
+            <a class="btn btn-primary" href={project.downloadUrl}>
+              <Icon name="download" size={15} /><T ko={STRINGS.download.ko} en={STRINGS.download.en} />
+            </a>
+          )}
+          {project.repoUrl && (
+            <a class="btn btn-secondary btn-icon" href={project.repoUrl} aria-label={STRINGS.github.ko} title={STRINGS.github.ko}>
+              <Icon name="github" size={16} />
+            </a>
+          )}
+        </>
+      ) : (
+        <>
+          <a class="btn btn-primary" href={project.url}>
+            <Icon name="external" size={15} /><T ko={STRINGS.openApp.ko} en={STRINGS.openApp.en} />
+          </a>
+          {project.repoUrl && (
+            <a class="btn btn-secondary btn-icon" href={project.repoUrl} aria-label={STRINGS.github.ko} title={STRINGS.github.ko}>
+              <Icon name="github" size={16} />
+            </a>
+          )}
+        </>
+      )}
+    </div>
+
+    {docLinks.length > 0 && (
+      <div class="cta-docs">
+        {docLinks.map((l) => (
+          <a class="btn-doc" href={l.href}>
+            <Icon name="doc" size={13} /><T ko={l.s.ko} en={l.s.en} />
+          </a>
+        ))}
+      </div>
     )}
   </div>
-
-  {docLinks.length > 0 && (
-    <div class="links">
-      {docLinks.map((l) => <a href={l.href}>{l.label}</a>)}
-    </div>
-  )}
 </article>
 
 <style>
-  .project-card {
-    border: 1px solid #e5e7eb;
+  .card {
+    border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 1.1rem 1.3rem;
+    background: var(--surface);
+    padding: 1.1rem 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
   }
-  .badges { display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
-  .kind-chip {
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 0.15rem 0.55rem;
-    border-radius: 999px;
-  }
-  .kind-download { background: #eef6ff; color: #1d4ed8; }
-  .kind-web { background: #edfbf3; color: #0f7a48; }
-
-  .project-card h3 { margin: 0.1rem 0; }
-  .project-card h3 a { text-decoration: none; color: inherit; }
-  .tagline { color: #6b7280; font-size: 0.9rem; margin: 0; }
-  .tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
-  .tag-chip {
-    font-size: 0.75rem;
-    color: #4f46e5;
-    background: #eef0fd;
-    padding: 0.1rem 0.5rem;
-    border-radius: 999px;
+  .card:hover {
+    border-color: color-mix(in oklab, var(--accent) 40%, var(--border));
+    box-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.18);
   }
 
-  .cta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.3rem; }
-  .btn {
-    font-size: 0.85rem;
-    text-decoration: none;
-    padding: 0.35rem 0.8rem;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    color: #374151;
-  }
-  .btn:hover { border-color: #9ca3af; }
-  .btn-primary {
-    background: #4f46e5;
-    border-color: #4f46e5;
-    color: #fff;
-  }
-  .btn-primary:hover { background: #4338ca; border-color: #4338ca; }
+  /* ① */
+  .row-status { display: flex; gap: 0.3rem; flex-wrap: wrap; }
 
-  .links {
-    margin-top: 0.3rem;
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-    font-size: 0.85rem;
-  }
-  .links a { color: #6b7280; text-decoration: none; }
-  .links a:hover { text-decoration: underline; }
-
-  /* 리스트 뷰일 때는 가로로 눕힌 카드 형태로 */
-  :global([data-view='list']) .project-card {
-    flex-direction: row;
+  /* ② */
+  /* 좁은 갤러리 카드에서 제목과 형태 칩이 겹치면 칩이 다음 줄로 내려가도록 wrap */
+  .row-title { display: flex; align-items: center; gap: 0.4rem 0.5rem; flex-wrap: wrap; }
+  .proj-icon {
+    display: inline-flex;
     align-items: center;
-    flex-wrap: wrap;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex: none;
+    border-radius: 8px;
+    color: var(--accent);
+    background: color-mix(in oklab, var(--accent) 12%, var(--surface));
   }
-  :global([data-view='list']) .project-card h3 { min-width: 160px; }
+  .proj-icon img { border-radius: 6px; display: block; }
+  /* 제목은 한 줄로 유지하고(min-width:max-content), 남는 폭이 부족하면 칩이 wrap된다. */
+  .proj-name { margin: 0; font-size: 0.92rem; line-height: 1.25; flex: 1 1 auto; min-width: max-content; }
+  .proj-name a { text-decoration: none; }
+  .proj-name a:hover { color: var(--accent); }
+  .kind-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: none;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+  }
+  .kind-download { color: var(--h-download); background: color-mix(in oklab, var(--h-download) 14%, var(--bg)); }
+  .kind-web { color: var(--h-web); background: color-mix(in oklab, var(--h-web) 14%, var(--bg)); }
+
+  /* ③ */
+  .tagline, .card :global(p.i18n) { color: var(--text-muted); font-size: 0.8rem; margin: 0; }
+
+  /* ④ */
+  .row-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+  .tag-chip {
+    font-size: 0.7rem;
+    color: var(--h-tag);
+    background: color-mix(in oklab, var(--h-tag) 13%, var(--bg));
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  /* ⑤ */
+  .row-actions { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.15rem; }
+  .cta-primary { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.38rem 0.8rem;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+  }
+  .btn-icon { padding: 0.38rem 0.5rem; }
+  .btn-primary { background: var(--accent); color: var(--accent-fg); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-secondary { border-color: var(--border); color: var(--text); background: var(--surface); }
+  .btn-secondary:hover { border-color: color-mix(in oklab, var(--text) 30%, var(--border)); }
+
+  /* 문서 그룹: 1차 액션과 확실히 다른 룩 (작은 옅은 칩형 + 점선 상단 구분) */
+  .cta-docs {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border);
+  }
+  .btn-doc {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    font-size: 0.72rem;
+    text-decoration: none;
+    padding: 0.24rem 0.55rem;
+    border-radius: 7px;
+    color: var(--h-doc);
+    background: color-mix(in oklab, var(--h-doc) 11%, var(--bg));
+  }
+  .btn-doc:hover { background: color-mix(in oklab, var(--h-doc) 20%, var(--bg)); }
 </style>

@@ -1,0 +1,53 @@
+---
+// apps/hub/src/components/Icon.astro
+// 인라인 SVG 아이콘 모음. <Icon name="github" /> 형태로 사용.
+// stroke/currentColor 기반이라 색은 부모의 color 를 따라간다(테마 자동 대응).
+interface Props {
+  name: string;
+  size?: number;
+}
+const { name, size = 18 } = Astro.props;
+
+// path 데이터. stroke 계열은 fill=none + stroke=currentColor, brand 계열은 fill=currentColor.
+const stroke =
+  'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+---
+{name === 'grid' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>`} />
+)}
+{name === 'list' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1.3"/><circle cx="3.5" cy="12" r="1.3"/><circle cx="3.5" cy="18" r="1.3"/></g>`} />
+)}
+{name === 'sun' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g>`} />
+)}
+{name === 'moon' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<path ${stroke} d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>`} />
+)}
+{name === 'download' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></g>`} />
+)}
+{name === 'external' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></g>`} />
+)}
+{name === 'globe' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></g>`} />
+)}
+{name === 'doc' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h6"/></g>`} />
+)}
+{name === 'github' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<path fill="currentColor" d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49l-.01-1.9c-2.78.62-3.37-1.2-3.37-1.2-.46-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.36 1.12 2.94.85.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9l-.01 2.82c0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/>`} />
+)}
+{name === 'linkedin' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.2.8 24 1.77 24h20.45c.98 0 1.78-.8 1.78-1.75V1.75C24 .78 23.2 0 22.22 0Z"/>`} />
+)}
+{name === 'instagram' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></g>`} />
+)}
+{name === 'blog' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16.5" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor" font-family="system-ui,-apple-system,sans-serif">B</text>`} />
+)}
+{name === 'email' && (
+  <svg width={size} height={size} viewBox="0 0 24 24" set:html={`<g ${stroke}><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></g>`} />
+)}

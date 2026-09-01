@@ -1,45 +1,47 @@
 ---
 // apps/hub/src/components/Badge.astro
-//
-// 상태 배지("진행중", "완료" 등)와 "업데이트됨" 배지를 계산해서 보여준다.
-// 업데이트됨의 기준(며칠 이내)은 RECENT_DAYS 하나만 바꾸면 전체에 반영됨.
-
+// 상태 배지("진행중" 등) + "업데이트됨" 배지. 기준일(RECENT_DAYS)만 바꾸면 전체 반영.
 import type { ProjectStatus } from '../data/projects';
+import { STRINGS } from '../i18n';
+import T from './T.astro';
 
 interface Props {
   status: ProjectStatus;
   updatedAt: string;
 }
-
 const { status, updatedAt } = Astro.props;
 
-const STATUS_LABEL: Record<ProjectStatus, string> = {
-  active: '진행중',
-  paused: '보류',
-  done: '완료',
-  archived: '중단',
+const STATUS_KEY: Record<ProjectStatus, keyof typeof STRINGS> = {
+  active: 'statusActive',
+  paused: 'statusPaused',
+  done: 'statusDone',
+  archived: 'statusArchived',
 };
+const s = STRINGS[STATUS_KEY[status]];
 
 const RECENT_DAYS = 14;
 const isRecentlyUpdated =
   (Date.now() - new Date(updatedAt).getTime()) / (1000 * 60 * 60 * 24) <= RECENT_DAYS;
 ---
-
-<span class:list={['badge', `badge-${status}`]}>{STATUS_LABEL[status]}</span>
-{isRecentlyUpdated && <span class="badge badge-updated">업데이트됨</span>}
+<span class:list={['badge', `badge-${status}`]}><T ko={s.ko} en={s.en} /></span>
+{isRecentlyUpdated && (
+  <span class="badge badge-updated">
+    <T ko={STRINGS.updated.ko} en={STRINGS.updated.en} />
+  </span>
+)}
 
 <style>
   .badge {
-    display: inline-block;
-    font-size: 0.72rem;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.68rem;
     font-weight: 600;
     padding: 0.15rem 0.55rem;
     border-radius: 999px;
-    margin-right: 0.3rem;
   }
-  .badge-active { background: #e6f7ec; color: #1a7f4b; }
-  .badge-paused { background: #fff4e5; color: #92600a; }
-  .badge-done { background: #e8eefc; color: #2b4fc7; }
-  .badge-archived { background: #f0f0f0; color: #6b7280; }
-  .badge-updated { background: #fdeaea; color: #c0392b; }
+  .badge-active { color: var(--h-active); background: color-mix(in oklab, var(--h-active) 15%, var(--bg)); }
+  .badge-paused { color: var(--h-paused); background: color-mix(in oklab, var(--h-paused) 15%, var(--bg)); }
+  .badge-done { color: var(--h-done); background: color-mix(in oklab, var(--h-done) 15%, var(--bg)); }
+  .badge-archived { color: var(--h-archived); background: color-mix(in oklab, var(--h-archived) 15%, var(--bg)); }
+  .badge-updated { color: var(--h-updated); background: color-mix(in oklab, var(--h-updated) 15%, var(--bg)); }
 </style>

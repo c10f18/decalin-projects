@@ -1,0 +1,16 @@
+---
+// apps/hub/src/components/T.astro
+// 다국어 문구를 KO/EN 두 벌 모두 DOM에 렌더링하고, 현재 언어에 맞는 쪽만 CSS로 보여준다.
+// (정적 사이트라 리렌더 없이 언어 토글이 즉시 동작하도록 하는 방식)
+interface Props {
+  ko: string;
+  en?: string;
+  as?: string; // 감쌀 태그 (기본 span)
+}
+const { ko, en, as = 'span' } = Astro.props;
+const Tag = as as any;
+---
+<Tag class="i18n">
+  <span lang="ko">{ko}</span>
+  {en && <span lang="en">{en}</span>}
+</Tag>
