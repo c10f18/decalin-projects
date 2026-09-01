@@ -55,6 +55,14 @@ export const STRINGS = {
   instagram: { ko: 'Instagram', en: 'Instagram' },
   email: { ko: '이메일', en: 'Email' },
 
+  // 검색 / 필터
+  searchPlaceholder: { ko: '이름·설명·태그 검색', en: 'Search name, description, tags' },
+  categoryAll: { ko: '전체', en: 'All' },
+  clearFilters: { ko: '초기화', en: 'Clear' },
+  noResults: { ko: '조건에 맞는 프로젝트가 없어요.', en: 'No projects match your filters.' },
+  createdLabel: { ko: '생성', en: 'Created' },
+  updatedLabel: { ko: '수정', en: 'Updated' },
+
   // 푸터
   rights: { ko: 'All rights reserved.', en: 'All rights reserved.' },
 } satisfies Record<string, Pair>;
