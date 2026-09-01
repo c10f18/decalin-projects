@@ -31,11 +31,36 @@ const docLinks = [
   { href: project.archUrl, s: STRINGS.architecture },
   { href: project.devNoteUrl, s: STRINGS.devNote },
 ].filter((l): l is { href: string; s: { ko: string; en: string } } => Boolean(l.href));
+
+// 클라이언트 검색/필터가 참조할 값. data-search 는 소문자로 합쳐 부분일치 검색에 사용.
+const searchText = [project.name, project.tagline, project.tagline_en, project.tags.join(' ')]
+  .filter(Boolean)
+  .join(' ')
+  .toLowerCase();
+const createdLabel = project.createdAt.replace(/-/g, '.');
+const updatedLabel = project.updatedAt.replace(/-/g, '.');
 ---
-<article class="card">
-  <!-- ① 상태 배지 -->
+<article
+  class="card"
+  data-card
+  data-kind={project.kind}
+  data-tags={project.tags.join(' ')}
+  data-created={project.createdAt}
+  data-updated={project.updatedAt}
+  data-search={searchText}
+>
+  <!-- ① 상태 배지 + 버전/날짜 메타 -->
   <div class="row-status">
     <Badge status={project.status} updatedAt={project.updatedAt} />
+    {project.version && <span class="version">{project.version}</span>}
+    <span class="dates">
+      <span class="date" title={`${STRINGS.createdLabel.ko}: ${createdLabel}`}>
+        <Icon name="calendar" size={12} />{createdLabel}
+      </span>
+      <span class="date" title={`${STRINGS.updatedLabel.ko}: ${updatedLabel}`}>
+        <Icon name="refresh" size={12} />{updatedLabel}
+      </span>
+    </span>
   </div>
 
   <!-- ② 아이콘 + 이름 + 형태 칩 -->
@@ -125,7 +150,20 @@ const docLinks = [
   }
 
   /* ① */
-  .row-status { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+  .row-status { display: flex; align-items: center; gap: 0.3rem 0.4rem; flex-wrap: wrap; }
+  .version {
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 0.05rem 0.38rem;
+    border-radius: 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .dates { margin-left: auto; display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+  .date { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.66rem; color: var(--text-muted); white-space: nowrap; }
+  .date :global(svg) { opacity: 0.75; }
 
   /* ② */
   /* 좁은 갤러리 카드에서 제목과 형태 칩이 겹치면 칩이 다음 줄로 내려가도록 wrap */

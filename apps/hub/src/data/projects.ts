@@ -31,7 +31,6 @@ export interface Project {
   // download 전용 —
   downloadUrl?: string; // GitHub Releases 최신 배포 (예: .../releases/latest)
   repoUrl?: string; // GitHub 저장소 (선택)
-  platform?: string; // "Windows" 등 지원 플랫폼 라벨 (선택)
 
   // 공통 문서 섹션 (없으면 카드에서 자동으로 숨겨짐)
   infoUrl?: string; // 릴리즈노트 목록
@@ -39,8 +38,12 @@ export interface Project {
   archUrl?: string; // 아키텍처 1페이지 (개발자용 구조 설명)
   devNoteUrl?: string; // 개발노트/회고 목록
 
+  // ▼ createdAt · updatedAt · version 은 빌드 시 GitHub(repoUrl)에서 자동으로 채워진다.
+  //   (created_at / pushed_at / releases-latest 태그) — 아래 값들은 조회 실패 시 폴백용.
   status: ProjectStatus;
-  updatedAt: string; // ISO date, "업데이트됨" 배지 계산에 사용
+  createdAt: string; // ISO date, 생성일 폴백값 (평소엔 GitHub created_at)
+  updatedAt: string; // ISO date, 수정일 폴백값 (평소엔 GitHub pushed_at) — "업데이트됨" 배지 계산에도 사용
+  version?: string; // 버전 폴백값 (평소엔 GitHub releases/latest 태그). 없으면 카드에서 숨겨짐
   tags: string[];
   thumbnail?: string; // /images/xxx.png, 없으면 기본 카드로 표시
 }
@@ -49,18 +52,19 @@ export const projects: Project[] = [
   {
     name: 'Photo Fold',
     slug: 'photo-fold',
-    tagline: '사진을 접어서(폴더 없이) 자동으로 정리해주는 개인용 사진 관리 도구',
+    tagline: '사진을 이벤트/촬영일 기준으로 폴더링 해주는 개인용 사진 정리 도구',
     kind: 'download',
     url: 'https://photo-fold.pages.dev', // 소개(광고) 랜딩 페이지
     downloadUrl: 'https://github.com/c10f18/photo-fold/releases/latest',
     repoUrl: 'https://github.com/c10f18/photo-fold',
-    platform: 'Windows',
     infoUrl: 'https://photo-fold.pages.dev/info',
     wikiUrl: 'https://photo-fold.pages.dev/wiki',
     archUrl: 'https://photo-fold.pages.dev/arch',
     devNoteUrl: 'https://photo-fold.pages.dev/devnote',
     status: 'active',
+    createdAt: '2026-08-20', // 폴백값 (평소엔 GitHub에서 자동)
     updatedAt: '2026-08-29',
+    version: 'v0.1.0', // 폴백값 (평소엔 GitHub에서 자동)
     tags: ['Image', 'Python', 'exe'],
   },
   {
@@ -71,13 +75,14 @@ export const projects: Project[] = [
     url: 'https://download-redmine-wiki.pages.dev',
     downloadUrl: 'https://github.com/c10f18/DownloadRedmineWiki/releases/latest',
     repoUrl: 'https://github.com/c10f18/DownloadRedmineWiki',
-    platform: 'Windows · macOS · Linux',
     infoUrl: 'https://download-redmine-wiki.pages.dev/info',
     wikiUrl: 'https://download-redmine-wiki.pages.dev/wiki',
     archUrl: 'https://download-redmine-wiki.pages.dev/arch',
     devNoteUrl: 'https://download-redmine-wiki.pages.dev/devnote',
     status: 'active',
+    createdAt: '2026-08-24', // 폴백값 (평소엔 GitHub에서 자동)
     updatedAt: '2026-08-31',
+    version: 'v0.1.0', // 폴백값 (평소엔 GitHub에서 자동)
     tags: ['Redmine', 'Python', 'exe'],
   },
   {
@@ -88,13 +93,14 @@ export const projects: Project[] = [
     url: 'https://qr-code-converter.pages.dev',
     downloadUrl: 'https://github.com/c10f18/QR_Code_Converter/releases/latest',
     repoUrl: 'https://github.com/c10f18/QR_Code_Converter',
-    platform: 'Windows',
     infoUrl: 'https://qr-code-converter.pages.dev/info',
     wikiUrl: 'https://qr-code-converter.pages.dev/wiki',
     archUrl: 'https://qr-code-converter.pages.dev/arch',
     devNoteUrl: 'https://qr-code-converter.pages.dev/devnote',
     status: 'active',
+    createdAt: '2026-08-27', // 폴백값 (평소엔 GitHub에서 자동)
     updatedAt: '2026-08-31',
+    version: 'v0.1.0', // 폴백값 (평소엔 GitHub에서 자동)
     tags: ['QR', 'Python', 'exe'],
   },
   // 다음 프로젝트를 배포하면 여기에 추가:

@@ -6,7 +6,37 @@ import ThemeToggle from '../components/ThemeToggle.astro';
 import LangToggle from '../components/LangToggle.astro';
 import ViewToggle from '../components/ViewToggle.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import Icon from '../components/Icon.astro';
+import T from '../components/T.astro';
 import { projects } from '../data/projects';
+import { fetchRepoMeta } from '../lib/github';
+import { STRINGS } from '../i18n';
+
+// 빌드 시 GitHub에서 생성일·수정일·버전을 가져와 채운다(실패하면 데이터의 수동값으로 폴백).
+const enriched = await Promise.all(
+  projects.map(async (p) => {
+    const meta = await fetchRepoMeta(p.repoUrl);
+    return {
+      ...p,
+      createdAt: meta.createdAt ?? p.createdAt,
+      updatedAt: meta.updatedAt ?? p.updatedAt,
+      version: meta.version ?? p.version,
+    };
+  })
+);
+
+// 생성일 최신순 정렬 (createdAt 내림차순). 날짜가 같으면 원래 배열 순서를 유지.
+const sortedProjects = [...enriched].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+// 태그 필터에 쓸 전체 태그 목록(중복 제거·정렬)
+const allTags = [...new Set(projects.flatMap((p) => p.tags))].sort((a, b) => a.localeCompare(b));
+
+// 카테고리(형태) 필터 버튼
+const categories = [
+  { value: 'all', s: STRINGS.categoryAll },
+  { value: 'web', s: STRINGS.kindWeb },
+  { value: 'download', s: STRINGS.kindDownload },
+];
 ---
 <Layout>
   <div class="topbar">
@@ -16,13 +46,105 @@ import { projects } from '../data/projects';
 
   <Header />
 
+  <!-- 좌측: 카테고리 필터 + 태그 필터 토글 + 초기화 / 우측: 뷰 토글 -->
   <div class="toolbar">
+    <div class="filter-left">
+      <div class="cats" role="group" aria-label="카테고리 필터">
+        {categories.map((c) => (
+          <button type="button" class="cat" data-cat={c.value} aria-pressed={c.value === 'all' ? 'true' : 'false'}>
+            <T ko={c.s.ko} en={c.s.en} />
+          </button>
+        ))}
+      </div>
+      {allTags.length > 0 && (
+        <button type="button" class="ctrl-btn tag-toggle" data-tag-toggle aria-expanded="false" aria-label="태그 필터" title="태그 필터">
+          <Icon name="tag" size={16} />
+        </button>
+      )}
+    </div>
     <ViewToggle />
   </div>
 
+  <!-- 태그 필터 (기본 숨김, 토글로 펼침) -->
+  {allTags.length > 0 && (
+    <div class="tagbar" data-tagbar hidden>
+      {allTags.map((t) => (
+        <button type="button" class="tag-filter" data-tag={t} aria-pressed="false">#{t}</button>
+      ))}
+      <!-- 선택한 태그 초기화: 태그 칩 맨 오른쪽에 인라인 아이콘으로, 태그가 선택됐을 때만 노출 -->
+      <button type="button" class="tag-clear" data-clear hidden aria-label={STRINGS.clearFilters.ko} title={STRINGS.clearFilters.ko}>
+        <Icon name="refresh" size={14} />
+      </button>
+    </div>
+  )}
+
+  <p class="noresults" data-noresults hidden><T ko={STRINGS.noResults.ko} en={STRINGS.noResults.en} /></p>
+
   <section class="project-grid" data-projects data-view="list">
-    {projects.map((project) => <ProjectCard project={project} />)}
+    {sortedProjects.map((project) => <ProjectCard project={project} />)}
   </section>
+
+  <script is:inline>
+    (function () {
+      var cat = 'all';
+      var sel = new Set();
+      var cats = document.querySelectorAll('[data-cat]');
+      var tags = document.querySelectorAll('[data-tag]');
+      var clear = document.querySelector('[data-clear]');
+      var tagToggle = document.querySelector('[data-tag-toggle]');
+      var tagbar = document.querySelector('[data-tagbar]');
+      var cards = document.querySelectorAll('[data-card]');
+      var noresults = document.querySelector('[data-noresults]');
+
+      function apply() {
+        var visible = 0;
+        cards.forEach(function (c) {
+          var okCat = cat === 'all' || c.dataset.kind === cat;
+          var cardTags = (c.dataset.tags || '').split(' ');
+          // AND: 선택한 태그를 모두 가진 프로젝트만 통과
+          var okTags = true;
+          sel.forEach(function (t) { if (cardTags.indexOf(t) === -1) okTags = false; });
+          var show = okCat && okTags;
+          c.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        if (noresults) noresults.hidden = visible > 0;
+        // refresh(초기화)는 "태그 선택"에만 관여한다. (카테고리는 '전체' 버튼이 곧 초기화)
+        if (clear) clear.hidden = sel.size === 0;
+        if (tagToggle) tagToggle.classList.toggle('has-active', sel.size > 0);
+      }
+
+      cats.forEach(function (b) {
+        b.addEventListener('click', function () {
+          cat = b.dataset.cat;
+          cats.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+          apply();
+        });
+      });
+      tags.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var t = b.dataset.tag;
+          if (sel.has(t)) { sel.delete(t); b.setAttribute('aria-pressed', 'false'); }
+          else { sel.add(t); b.setAttribute('aria-pressed', 'true'); }
+          apply();
+        });
+      });
+      if (tagToggle && tagbar) {
+        tagToggle.addEventListener('click', function () {
+          var open = tagbar.hidden;
+          tagbar.hidden = !open;
+          tagToggle.setAttribute('aria-expanded', String(open));
+        });
+      }
+      if (clear) clear.addEventListener('click', function () {
+        // 태그 선택만 초기화 (카테고리는 그대로 유지)
+        sel.clear();
+        tags.forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
+        apply();
+      });
+      apply();
+    })();
+  </script>
 
   <style>
     /* 최상단 우측 코너 고정: 테마 / 언어 토글 (흐름에서 빼내 헤더를 밀지 않음) */
@@ -41,12 +163,82 @@ import { projects } from '../data/projects';
       padding: 0 0.4rem;
       border-radius: 8px;
     }
-    /* 목록 바로 위 우측: 뷰 토글 */
+
+    /* 툴바: 좌측 필터 / 우측 뷰 토글 */
     .toolbar {
       display: flex;
-      justify-content: flex-end;
-      margin: 1.4rem 0 1rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin: 1.4rem 0 0.8rem;
     }
+    .filter-left {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .cats {
+      display: inline-flex;
+      padding: 3px;
+      gap: 2px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-2);
+    }
+    .cat {
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+    }
+    .cat:hover { color: var(--text); }
+    .cat[aria-pressed='true'] {
+      background: var(--surface);
+      color: var(--accent);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .tag-toggle { cursor: pointer; }
+    .tag-toggle[aria-expanded='true'] { color: var(--text); border-color: color-mix(in oklab, var(--text) 25%, var(--border)); }
+    .tag-toggle.has-active { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); }
+
+    /* 태그 필터 (기본 숨김) */
+    .tagbar { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .tagbar[hidden] { display: none; }
+    .tag-filter {
+      font-size: 0.74rem;
+      color: var(--h-tag);
+      background: color-mix(in oklab, var(--h-tag) 12%, var(--bg));
+      border: 1px solid transparent;
+      padding: 0.16rem 0.55rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .tag-filter:hover { border-color: color-mix(in oklab, var(--h-tag) 40%, var(--border)); }
+    .tag-filter[aria-pressed='true'] { background: var(--accent); color: var(--accent-fg); }
+
+    /* 인라인 태그 초기화 아이콘 (박스형 버튼 아님) */
+    .tag-clear {
+      display: inline-flex;
+      align-items: center;
+      border: 0;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.1rem 0.2rem;
+      margin-left: 0.15rem;
+    }
+    .tag-clear[hidden] { display: none; }
+    .tag-clear:hover { color: var(--accent); }
+
+    .noresults { color: var(--text-muted); text-align: center; padding: 2rem 0; font-size: 0.9rem; }
 
     /* 갤러리(grid): 카드형 그리드 */
     .project-grid[data-view='grid'] {
