@@ -3,6 +3,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostList from '../../../../../packages/docs-viewer/src/PostList.astro';
 import { globToPosts } from '../../../../../packages/docs-viewer/src/postUtils';
+import T from '../../components/T.astro';
+import { STRINGS } from '../../i18n';
 
 const modules = import.meta.glob('../../content/wiki/*.md', { eager: true });
 const posts = globToPosts(modules);
@@ -10,8 +12,8 @@ const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
 ---
 
 <BaseLayout title="위키">
-  <a href="/">← 홈</a>
-  <h1>위키</h1>
-  <p>기능 명세와 구조 문서를 모아둔 곳입니다.</p>
+  <a class="back-home" href="/">← <T ko={STRINGS.home.ko} en={STRINGS.home.en} /></a>
+  <T as="h1" ko={STRINGS.wiki.ko} en={STRINGS.wiki.en} />
+  <T as="p" ko={STRINGS.wikiDesc.ko} en={STRINGS.wikiDesc.en} />
   <PostList posts={posts} activeTag={activeTag} basePath="/wiki" />
 </BaseLayout>

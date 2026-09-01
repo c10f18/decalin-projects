@@ -1,5 +1,11 @@
 ---
 // 새 프로젝트로 복사하면 SITE_NAME만 바꾸세요.
+import '../styles/theme.css';
+import HeadBoot from '../components/HeadBoot.astro';
+import SiteControls from '../components/SiteControls.astro';
+import T from '../components/T.astro';
+import { STRINGS, DEFAULT_LANG } from '../i18n';
+
 const SITE_NAME = 'Template Download';
 
 interface Props {
@@ -8,24 +14,25 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<html lang="ko">
+<html lang={DEFAULT_LANG}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} · {SITE_NAME}</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <HeadBoot />
   </head>
   <body>
+    <SiteControls />
     <div class="page">
       <slot />
     </div>
+    <footer class="site-footer">
+      © {new Date().getFullYear()} {SITE_NAME}. <T ko={STRINGS.rights.ko} en={STRINGS.rights.en} />
+    </footer>
+
     <style is:global>
-      body {
-        font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
-        color: #1f2328;
-        margin: 0;
-      }
-      .page { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+      body { min-height: 100vh; display: flex; flex-direction: column; }
+      .page { flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem; }
     </style>
   </body>
 </html>

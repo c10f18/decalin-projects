@@ -1,0 +1,14 @@
+---
+// KO/EN 두 벌을 모두 렌더하고 현재 언어 쪽만 CSS로 보여준다(정적 사이트용 언어 토글).
+interface Props {
+  ko: string;
+  en?: string;
+  as?: string;
+}
+const { ko, en, as = 'span' } = Astro.props;
+const Tag = as as any;
+---
+<Tag class="i18n">
+  <span lang="ko">{ko}</span>
+  {en && <span lang="en">{en}</span>}
+</Tag>

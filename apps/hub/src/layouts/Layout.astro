@@ -27,15 +27,21 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
 
-    <!-- 플래시 방지: 페인트 전에 저장된 테마/언어를 <html>에 적용 -->
+    <!-- 플래시 방지: 페인트 전에 저장된(또는 감지한) 테마/언어를 <html>에 적용 -->
     <script is:inline>
       (function () {
         try {
           var t = localStorage.getItem('hub-theme');
           if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+
+          // 언어: 저장값 우선 → 없으면 브라우저 언어 자동감지(ko*면 ko, 그 외 en)
           var l = localStorage.getItem('hub-lang');
-          if (l === 'ko' || l === 'en') document.documentElement.lang = l;
-          document.documentElement.dataset.lang = document.documentElement.lang;
+          if (l !== 'ko' && l !== 'en') {
+            var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'ko').toLowerCase();
+            l = nav.indexOf('ko') === 0 ? 'ko' : 'en';
+          }
+          document.documentElement.lang = l;
+          document.documentElement.dataset.lang = l;
         } catch (e) {}
       })();
     </script>

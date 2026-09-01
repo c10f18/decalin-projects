@@ -3,6 +3,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostList from '../../../../../packages/docs-viewer/src/PostList.astro';
 import { globToPosts } from '../../../../../packages/docs-viewer/src/postUtils';
+import T from '../../components/T.astro';
+import { STRINGS } from '../../i18n';
 
 const modules = import.meta.glob('../../content/changelog/*.md', { eager: true });
 const posts = globToPosts(modules);
@@ -10,7 +12,7 @@ const activeTag = Astro.url.searchParams.get('tag') ?? undefined;
 ---
 
 <BaseLayout title="릴리즈 노트">
-  <a href="/">← 홈</a>
-  <h1>릴리즈 노트</h1>
+  <a class="back-home" href="/">← <T ko={STRINGS.home.ko} en={STRINGS.home.en} /></a>
+  <T as="h1" ko={STRINGS.releaseNotes.ko} en={STRINGS.releaseNotes.en} />
   <PostList posts={posts} activeTag={activeTag} basePath="/info" />
 </BaseLayout>

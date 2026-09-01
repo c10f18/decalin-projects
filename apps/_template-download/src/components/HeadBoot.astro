@@ -1,0 +1,28 @@
+---
+// <head>에 넣는 공용 조각: 파비콘 + 플래시 방지 부트 스크립트.
+// 테마는 항상 확정값(light/dark)을 <html data-theme>에 찍는다(공유 docs-viewer가
+// prefers-color-scheme로 오작동하지 않도록 CSS는 명시값만 사용).
+// 언어는 저장값 우선 → 없으면 브라우저 언어 자동감지(ko*면 ko, 그 외 en).
+---
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content="#4f46e5" />
+<script is:inline>
+  (function () {
+    try {
+      var root = document.documentElement;
+      var t = localStorage.getItem('site-theme');
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      root.dataset.theme = t;
+
+      var l = localStorage.getItem('site-lang');
+      if (l !== 'ko' && l !== 'en') {
+        var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'ko').toLowerCase();
+        l = nav.indexOf('ko') === 0 ? 'ko' : 'en';
+      }
+      root.lang = l;
+      root.dataset.lang = l;
+    } catch (e) {}
+  })();
+</script>
