@@ -60,6 +60,14 @@ pnpm dev:photo-fold   # 다른 터미널에서: 개별 프로젝트
 
 ## Cloudflare Pages 배포 (도메인 구매 없이)
 
+> ⚠️ **가장 헷갈리는 함정 — 4개 Pages 프로젝트는 전부 이 저장소(`decalin-projects`) 하나에 연결합니다.**
+> 각 앱의 코드는 개별 저장소가 아니라 이 모노레포의 `apps/<앱>` 안에 있습니다. 그래서 Pages 프로젝트를
+> 만들 때 저장소 선택에서 **항상 `c10f18/decalin-projects` 를 골라야** 합니다.
+> 이름이 같은 다른 저장소(예: exe 프로젝트인 `c10f18/photo-fold`)를 고르면
+> `ERR_PNPM_NO_PKG_MANIFEST No package.json found` 에러로 빌드가 실패합니다.
+> (그 저장소 루트엔 이 모노레포의 `package.json`이 없기 때문.)
+> **저장소는 하나, Pages 프로젝트는 앱 수만큼** — 프로젝트 이름·빌드명령·출력디렉터리만 앱마다 다릅니다.
+
 1. 저장소를 GitHub에 push (모노레포 하나로 OK).
 2. Cloudflare 대시보드 → Workers & Pages → **Create** → **Pages** → **Connect to Git** → 저장소 연결
    (처음 한 번만 Cloudflare의 GitHub 앱 권한을 승인하고 대상 repo를 고르면 됨).
@@ -83,6 +91,26 @@ pnpm dev:photo-fold   # 다른 터미널에서: 개별 프로젝트
    앱 `package.json`에도 `packageManager` 필드를 넣어줘야 합니다.)
 5. 나중에 진짜 도메인을 사면 각 Pages 프로젝트의 "Custom domains" 탭에 연결만 추가하면 됩니다.
 
+### 왜 앱마다 Pages 프로젝트를 따로 만드나
+
+**"저장소 하나(모노레포) ≠ 배포 하나"** 입니다. 코드는 한 저장소에 모여 있지만, 배포는 앱마다
+별도의 Cloudflare Pages 프로젝트로 나눕니다. 이유:
+
+- **독립 주소**: Cloudflare Pages는 "1 프로젝트 = 1 사이트 = 1 도메인" 모델입니다. `photo-fold.pages.dev`,
+  `qr-code-converter.pages.dev`처럼 앱마다 다른 주소를 주려면 프로젝트가 분리돼야 합니다.
+  한 프로젝트로는 여러 독립 사이트를 만들 수 없습니다.
+- **독립 배포·롤백**: 한 앱만 고쳐서 그 앱만 재배포하거나 이전 버전으로 롤백할 수 있습니다.
+  한 사이트가 빌드 실패해도 나머지는 멀쩡합니다.
+- **독립 설정**: 앱마다 커스텀 도메인, 환경변수, 접근제어(Access), 빌드 설정을 따로 관리합니다.
+- **나중에 진짜 도메인**: 앱별로 다른 도메인을 각 프로젝트의 "Custom domains"에 붙일 수 있습니다.
+
+즉 **저장소(=코드 보관)와 Pages 프로젝트(=배포 단위)는 별개의 축**입니다. 저장소는 하나로 두어
+관리를 단순하게 하고, 배포는 앱 단위로 쪼개어 각각 독립된 사이트로 서비스합니다.
+
+> 참고: 같은 저장소를 4개 프로젝트가 공유하므로, Root directory를 루트로 두면 push 한 번에 4개가
+> 모두 다시 빌드됩니다(위 4번 참고). 바뀐 앱만 빌드하려면 각 프로젝트에서 Root directory를
+> `apps/<앱>`로 지정하는 방법도 있습니다.
+
 ## 새 프로젝트를 추가하는 절차
 
 1. 형태에 맞는 템플릿을 통째로 복사해서 `apps/새프로젝트명`으로 이름 변경
@@ -92,8 +120,9 @@ pnpm dev:photo-fold   # 다른 터미널에서: 개별 프로젝트
    (웹 템플릿은 `BaseLayout.astro`의 `SITE_NAME`도, 다운로드형은 `index.astro`의 `REPO_URL`도 함께 수정)
 3. 루트 `package.json`에 빌드 스크립트 한 줄 추가: `"build:새이름": "pnpm --filter 새이름 build"`
 4. `src/content/{changelog,wiki,devnote}`의 예시 글과 `architecture.md`는 지우고 새로 작성
-5. Cloudflare Pages에서 새 프로젝트 생성 (Root directory=루트,
-   Build command=`pnpm install && pnpm build:새이름`, Output=`apps/새이름/dist` — 위 표 참고)
+5. Cloudflare Pages에서 새 프로젝트 생성 — 저장소는 **반드시 `decalin-projects`** 선택
+   (Root directory=루트, Build command=`pnpm install && pnpm build:새이름`,
+   Output=`apps/새이름/dist` — 위 배포 표 참고)
 6. `apps/hub/src/data/projects.ts`에 새 프로젝트 정보 한 줄(객체) 추가 → 허브에 카드 자동 생성
    - 웹: `kind: 'web'`, `url`(앱=`/`)만 채우면 됨. 소개 랜딩(`/intro`)을 만들었다면 `introUrl`도 채우면 "소개" 버튼이 붙음
    - 다운로드형: `kind: 'download'`, `url`(랜딩) + `downloadUrl`(Releases) + `repoUrl` 채우기
