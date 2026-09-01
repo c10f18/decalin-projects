@@ -53,6 +53,7 @@ export const projects: Project[] = [
     name: 'Photo Fold',
     slug: 'photo-fold',
     tagline: '사진을 이벤트/촬영일 기준으로 폴더링 해주는 개인용 사진 정리 도구',
+    tagline_en: 'A personal photo organizer that sorts your photos into folders by event and shooting date.',
     kind: 'download',
     url: 'https://photo-fold.pages.dev', // 소개(광고) 랜딩 페이지
     downloadUrl: 'https://github.com/c10f18/photo-fold/releases/latest',
@@ -71,6 +72,7 @@ export const projects: Project[] = [
     name: 'Redmine Wiki Downloader',
     slug: 'download-redmine-wiki',
     tagline: 'Redmine 프로젝트의 위키 페이지를 통째로 Markdown으로 내려받는 GUI 도구',
+    tagline_en: 'A GUI tool that downloads an entire Redmine project wiki as Markdown.',
     kind: 'download',
     url: 'https://download-redmine-wiki.pages.dev',
     downloadUrl: 'https://github.com/c10f18/DownloadRedmineWiki/releases/latest',
@@ -89,6 +91,7 @@ export const projects: Project[] = [
     name: 'QR Code Converter',
     slug: 'qr-code-converter',
     tagline: '엑셀의 URL 목록을 한 번에 QR 코드 이미지로 변환하는 Windows 유틸리티',
+    tagline_en: 'A Windows utility that converts a list of URLs in Excel into QR code images in one go.',
     kind: 'download',
     url: 'https://qr-code-converter.pages.dev',
     downloadUrl: 'https://github.com/c10f18/QR_Code_Converter/releases/latest',

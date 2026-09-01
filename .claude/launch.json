@@ -6,6 +6,18 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["pnpm", "--filter", "hub", "dev"],
       "port": 4321
+    },
+    {
+      "name": "template-download",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["pnpm", "--filter", "template-download", "exec", "astro", "dev", "--port", "4331"],
+      "port": 4331
+    },
+    {
+      "name": "template-web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["pnpm", "--filter", "template-web", "exec", "astro", "dev", "--port", "4332"],
+      "port": 4332
     }
   ]
 }
